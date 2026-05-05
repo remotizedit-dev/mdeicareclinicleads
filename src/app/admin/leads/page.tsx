@@ -184,6 +184,7 @@ export default function LeadsPage() {
           </table>
         </div>
       </div>
+      </div>
 
       {/* View Lead Modal */}
       {selectedLead && (
