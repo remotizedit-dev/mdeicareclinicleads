@@ -4,26 +4,12 @@ import { useState, useEffect } from "react";
 import { FormField, getFormFields, submitLead, DEFAULT_FIELDS } from "@/lib/formService";
 import { CheckCircle, Loader2 } from "lucide-react";
 
-export default function LeadForm() {
-  const [fields, setFields] = useState<FormField[]>(DEFAULT_FIELDS);
+export default function LeadForm({ initialFields = DEFAULT_FIELDS }: { initialFields?: FormField[] }) {
+  const [fields, setFields] = useState<FormField[]>(initialFields.length > 0 ? initialFields : DEFAULT_FIELDS);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    async function fetchFields() {
-      try {
-        const fetchedFields = await getFormFields();
-        if (fetchedFields && fetchedFields.length > 0) {
-          setFields(fetchedFields);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    fetchFields();
-  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({

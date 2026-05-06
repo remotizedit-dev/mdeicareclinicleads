@@ -2,8 +2,10 @@ import LeadForm from "@/components/LeadForm";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Activity, Shield, Clock } from "lucide-react";
+import { getFormFields } from "@/lib/formService";
 
-export default function Home() {
+export default async function Home() {
+  const fields = await getFormFields();
   return (
     <>
       <Navbar />
@@ -98,7 +100,7 @@ export default function Home() {
           </div>
           
           <div className="animate-fade-in delay-2">
-            <LeadForm />
+            <LeadForm initialFields={fields} />
           </div>
 
         </div>
