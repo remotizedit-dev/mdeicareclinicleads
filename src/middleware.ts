@@ -8,8 +8,10 @@ export function middleware(request: NextRequest) {
   // Get allowed subdomains from environment variable or use defaults
   const allowedSubdomains = (process.env.ADMIN_SUBDOMAINS || 'cms,admin,back,portal').split(',');
   
-  // Check if the current hostname starts with any of the allowed subdomains
-  const isAdminSubdomain = allowedSubdomains.some(sub => hostname.startsWith(`${sub}.`));
+  // Check if the current hostname starts with any of the allowed subdomains (supports cms.domain.com and cms-verceldomain.vercel.app)
+  const isAdminSubdomain = allowedSubdomains.some(sub => 
+    hostname.startsWith(`${sub}.`) || hostname.startsWith(`${sub}-`)
+  );
 
   if (isAdminSubdomain) {
     // If accessing the root of the subdomain, rewrite to /admin/leads
