@@ -12,25 +12,9 @@ export default function LeadForm({ initialFields = DEFAULT_FIELDS }: { initialFi
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // If we got initial fields, use them first for fast rendering
     if (initialFields && initialFields.length > 0) {
       setFields(initialFields);
     }
-    
-    // Then ALWAYS fetch the freshest fields from Firebase directly from the browser
-    // This completely bypasses any Next.js server caching
-    async function fetchLatest() {
-      try {
-        const freshFields = await getFormFields();
-        if (freshFields && freshFields.length > 0) {
-          setFields(freshFields);
-        }
-      } catch (err) {
-        console.error("Failed to fetch latest fields:", err);
-      }
-    }
-    
-    fetchLatest();
   }, [initialFields]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

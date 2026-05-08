@@ -1,6 +1,5 @@
 import { db } from "./firebase";
 import { collection, getDocs, addDoc, doc, setDoc, query, orderBy, deleteDoc } from "firebase/firestore";
-import { unstable_noStore as noStore } from "next/cache";
 
 export async function deleteLead(id: string) {
   const docRef = doc(db, "leads", id);
@@ -28,15 +27,11 @@ export const DEFAULT_FIELDS: FormField[] = [
 ];
 
 export async function getFormFields(): Promise<FormField[]> {
-  noStore();
   try {
     const q = query(collection(db, "form_fields"), orderBy("order", "asc"));
     const snapshot = await getDocs(q);
     
-    console.log("Fetched form fields from Firestore:", snapshot.docs.map(d => d.data()));
-
     if (snapshot.empty) {
-      console.log("Snapshot empty, returning DEFAULT_FIELDS");
       // Return defaults if not configured
       return DEFAULT_FIELDS;
     }
@@ -46,7 +41,7 @@ export async function getFormFields(): Promise<FormField[]> {
       ...doc.data()
     } as FormField));
   } catch (error) {
-    console.error("Error fetching form fields on server/client:", error);
+    console.error("Error fetching form fields:", error);
     return DEFAULT_FIELDS; // fallback
   }
 }
