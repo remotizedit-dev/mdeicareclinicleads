@@ -11,6 +11,12 @@ export default function LeadForm({ initialFields = DEFAULT_FIELDS }: { initialFi
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (initialFields && initialFields.length > 0) {
+      setFields(initialFields);
+    }
+  }, [initialFields]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
