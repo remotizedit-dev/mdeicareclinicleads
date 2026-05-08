@@ -1,5 +1,6 @@
 import { db } from "./firebase";
 import { collection, getDocs, addDoc, doc, setDoc, query, orderBy, deleteDoc } from "firebase/firestore";
+import { unstable_noStore as noStore } from "next/cache";
 
 export async function deleteLead(id: string) {
   const docRef = doc(db, "leads", id);
@@ -27,11 +28,15 @@ export const DEFAULT_FIELDS: FormField[] = [
 ];
 
 export async function getFormFields(): Promise<FormField[]> {
+  noStore();
   try {
     const q = query(collection(db, "form_fields"), orderBy("order", "asc"));
     const snapshot = await getDocs(q);
     
+    console.log("Fetched form fields from Firestore:", snapshot.docs.map(d => d.data()));
+
     if (snapshot.empty) {
+      console.log("Snapshot empty, returning DEFAULT_FIELDS");
       // Return defaults if not configured
       return DEFAULT_FIELDS;
     }
@@ -41,19 +46,22 @@ export async function getFormFields(): Promise<FormField[]> {
       ...doc.data()
     } as FormField));
   } catch (error) {
-    console.error("Error fetching form fields:", error);
+    console.error("Error fetching form fields on server/client:", error);
     return DEFAULT_FIELDS; // fallback
   }
 }
 
 export async function saveFormFields(fields: FormField[]) {
-  // In a real app, we might want a batch write here
-  // For simplicity, we assume we update them one by one or create a single config doc
-  // Let's create a single doc in 'settings' for simplicity, or just save them into 'form_fields'
-  const collectionRef = collection(db, "form_fields");
+  // First, get all existing fields to delete them so we don't have stale fields
+  const q = query(collection(db, "form_fields"));
+  const snapshot = await getDocs(q);
   
-  // To replace all, ideally we'd delete existing first. 
-  // For simplicity, we just use setDoc with fixed IDs based on name
+  // Delete all existing documents
+  for (const docSnapshot of snapshot.docs) {
+    await deleteDoc(doc(db, "form_fields", docSnapshot.id));
+  }
+  
+  // Now save all the new fields
   for (const field of fields) {
     const docRef = doc(db, "form_fields", field.id || field.name);
     await setDoc(docRef, field);
