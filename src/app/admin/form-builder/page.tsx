@@ -18,7 +18,7 @@ export default function FormBuilderPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
-  
+
   // Modal State
   const [showAddModal, setShowAddModal] = useState(false);
   const [newField, setNewField] = useState<Partial<FormField>>({
@@ -106,7 +106,7 @@ export default function FormBuilderPage() {
             <Plus size={18} /> Add Field
           </button>
           <button onClick={handleSave} className="btn btn-primary" disabled={saving}>
-            {saving ? <Loader2 className="animate-spin" size={18}/> : <Save size={18}/>} 
+            {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
             Save Changes
           </button>
         </div>
@@ -124,13 +124,13 @@ export default function FormBuilderPage() {
             <div style={{ color: "var(--text-secondary)", cursor: "grab", paddingTop: "0.5rem" }}>
               <GripVertical size={20} />
             </div>
-            
+
             <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label">Field Label</label>
-                <input 
-                  type="text" 
-                  className="form-input" 
+                <input
+                  type="text"
+                  className="form-input"
                   value={field.label}
                   onChange={(e) => updateField(index, { label: e.target.value })}
                 />
@@ -138,9 +138,9 @@ export default function FormBuilderPage() {
 
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label">Internal Name (No spaces)</label>
-                <input 
-                  type="text" 
-                  className="form-input" 
+                <input
+                  type="text"
+                  className="form-input"
                   value={field.name}
                   onChange={(e) => updateField(index, { name: e.target.value.replace(/\s+/g, '_').toLowerCase() })}
                 />
@@ -148,7 +148,7 @@ export default function FormBuilderPage() {
 
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label">Field Type</label>
-                <select 
+                <select
                   className="form-input"
                   value={field.type}
                   onChange={(e) => updateField(index, { type: e.target.value as FormFieldType })}
@@ -159,8 +159,8 @@ export default function FormBuilderPage() {
 
               <div className="form-group" style={{ marginBottom: 0, display: "flex", alignItems: "center" }}>
                 <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", marginTop: "1.5rem" }}>
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     checked={field.required}
                     onChange={(e) => updateField(index, { required: e.target.checked })}
                     style={{ width: "1.2rem", height: "1.2rem", cursor: "pointer" }}
@@ -172,9 +172,9 @@ export default function FormBuilderPage() {
               {field.type === "select" && (
                 <div className="form-group" style={{ gridColumn: "1 / -1", marginBottom: 0 }}>
                   <label className="form-label">Options (comma separated)</label>
-                  <input 
-                    type="text" 
-                    className="form-input" 
+                  <input
+                    type="text"
+                    className="form-input"
                     defaultValue={field.options?.join(", ") || ""}
                     placeholder="e.g. Option 1, Option 2, Option 3"
                     onBlur={(e) => updateField(index, { options: e.target.value.split(",").map(s => s.trim()).filter(Boolean) })}
@@ -183,9 +183,9 @@ export default function FormBuilderPage() {
               )}
             </div>
 
-            <button 
+            <button
               onClick={() => removeField(index)}
-              className="btn btn-secondary" 
+              className="btn btn-secondary"
               style={{ color: "var(--danger)", border: "none", padding: "0.5rem" }}
               title="Remove Field"
             >
@@ -211,20 +211,20 @@ export default function FormBuilderPage() {
           padding: "1rem"
         }}>
           <div className="card animate-fade-in" style={{ width: "100%", maxWidth: "500px", position: "relative", padding: "2rem" }}>
-            <button 
+            <button
               onClick={() => setShowAddModal(false)}
               style={{ position: "absolute", top: "1rem", right: "1rem", background: "none", border: "none", cursor: "pointer", color: "var(--text-secondary)" }}
             >
               <X size={24} />
             </button>
             <h2 style={{ marginBottom: "1.5rem" }}>Add New Field</h2>
-            
+
             <div style={{ display: "grid", gap: "1.5rem" }}>
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label">Field Label (e.g., Preferred Doctor)</label>
-                <input 
-                  type="text" 
-                  className="form-input" 
+                <input
+                  type="text"
+                  className="form-input"
                   value={newField.label}
                   onChange={(e) => {
                     const label = e.target.value;
@@ -233,10 +233,10 @@ export default function FormBuilderPage() {
                   autoFocus
                 />
               </div>
-              
+
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label">Field Type</label>
-                <select 
+                <select
                   className="form-input"
                   value={newField.type}
                   onChange={(e) => setNewField({ ...newField, type: e.target.value as FormFieldType })}
@@ -248,9 +248,9 @@ export default function FormBuilderPage() {
               {newField.type === "select" && (
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label className="form-label">Options (comma separated)</label>
-                  <input 
-                    type="text" 
-                    className="form-input" 
+                  <input
+                    type="text"
+                    className="form-input"
                     placeholder="e.g. Male, Female, Other"
                     onBlur={(e) => setNewField({ ...newField, options: e.target.value.split(",").map(s => s.trim()).filter(Boolean) })}
                   />
@@ -260,8 +260,8 @@ export default function FormBuilderPage() {
 
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     checked={newField.required}
                     onChange={(e) => setNewField({ ...newField, required: e.target.checked })}
                     style={{ width: "1.2rem", height: "1.2rem", cursor: "pointer" }}
@@ -270,7 +270,7 @@ export default function FormBuilderPage() {
                 </label>
               </div>
             </div>
-            
+
             <div style={{ marginTop: "2rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
               <button onClick={() => setShowAddModal(false)} className="btn btn-secondary">
                 Cancel

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { FormField, getFormFields, submitLead, DEFAULT_FIELDS } from "@/lib/formService";
+import { sendLeadEmail } from "@/app/actions/sendEmail";
 import { CheckCircle, Loader2 } from "lucide-react";
 
 export default function LeadForm({ initialFields = DEFAULT_FIELDS }: { initialFields?: FormField[] }) {
@@ -30,7 +31,12 @@ export default function LeadForm({ initialFields = DEFAULT_FIELDS }: { initialFi
     setError("");
     
     try {
+      // 1. Save to Firebase
       await submitLead(formData);
+      
+      // 2. Send Email Notification
+      await sendLeadEmail(formData);
+
       setSuccess(true);
       setFormData({});
     } catch (err) {
