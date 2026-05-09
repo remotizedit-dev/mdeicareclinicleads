@@ -2,15 +2,29 @@ import LeadForm from "@/components/LeadForm";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Activity, Shield, Clock } from "lucide-react";
-import { getFormFields } from "@/lib/formService";
+export default function Home() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "MedicalClinic",
+    "name": "Medicare Clinic – Memorial Drive",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "171 52 St SE",
+      "addressLocality": "Calgary",
+      "addressRegion": "AB",
+      "postalCode": "T2A 5H8",
+      "addressCountry": "CA"
+    },
+    "telephone": "+15873563793", // using one of the existing clinic numbers
+    "url": "https://medicareclinic.ca"
+  };
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
-export default async function Home() {
-  const fields = await getFormFields();
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
       <main style={{ position: "relative", overflow: "hidden" }}>
       {/* Decorative Background Elements */}
@@ -103,7 +117,7 @@ export default async function Home() {
           </div>
           
           <div className="animate-fade-in delay-2">
-            <LeadForm initialFields={fields} />
+            <LeadForm />
           </div>
 
         </div>

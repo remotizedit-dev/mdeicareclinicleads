@@ -28,7 +28,7 @@ export async function sendLeadEmail(formData: Record<string, any>) {
 
     const mailOptions = {
       from: process.env.GMAIL_USER,
-      to: process.env.RECEIVER_EMAIL || process.env.GMAIL_USER, // Sends to specific email or defaults to sender
+      to: process.env.RECEIVER_EMAIL?.split(",") || process.env.GMAIL_USER, // Sends to specific email or defaults to sender
       subject: "New Lead Form Submission - Medicare Clinic",
       text: `You have received a new lead submission:\n\n${formText}`,
       html: `

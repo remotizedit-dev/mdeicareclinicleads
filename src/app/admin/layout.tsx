@@ -65,10 +65,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Users size={20} />
             Lead Management
           </Link>
-          <Link href="/form-builder" className={`sidebar-link ${pathname === "/form-builder" ? "active" : ""}`}>
-            <Settings size={20} />
-            Form Builder
-          </Link>
         </nav>
 
         <div style={{ marginTop: "auto", padding: "0 1.5rem" }}>

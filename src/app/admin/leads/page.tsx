@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getLeads, getFormFields, deleteLead, FormField } from "@/lib/formService";
+import { getLeads, deleteLead } from "@/lib/formService";
 import { Loader2, Download, Search, Eye, Trash2, X } from "lucide-react";
 
 export default function LeadsPage() {
@@ -15,12 +15,8 @@ export default function LeadsPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [fetchedLeads, fetchedFields] = await Promise.all([
-          getLeads(),
-          getFormFields()
-        ]);
+        const fetchedLeads = await getLeads();
         setLeads(fetchedLeads);
-        setFields(fetchedFields);
       } catch (err) {
         console.error(err);
       } finally {
@@ -37,11 +33,11 @@ export default function LeadsPage() {
 
   const exportCSV = () => {
     if (leads.length === 0) return;
-    const headers = ["ID", "Date", "Status", ...fields.map(f => f.label)];
+    const headers = ["ID", "Date", "Status", "First Name", "Last Name", "Phone", "Email", "Reason", "Source"];
     const rows = filteredLeads.map(lead => {
       const date = new Date(lead.createdAt).toLocaleDateString();
       const baseData = [lead.id, date, lead.status || "new"];
-      const dynamicData = fields.map(f => `"${(lead[f.name] || "").toString().replace(/"/g, '""')}"`);
+      const dynamicData = [lead.firstName, lead.lastName, lead.phone, lead.email, lead.reason, lead.source].map(v => `"${(v || "").toString().replace(/"/g, '""')}"`);
       return [...baseData, ...dynamicData].join(",");
     });
     const csvContent = [headers.join(","), ...rows].join("\n");
@@ -113,9 +109,9 @@ export default function LeadsPage() {
             <thead>
               <tr>
                 <th>Date</th>
-                {fields.slice(0, 3).map(field => ( 
-                  <th key={field.id}>{field.label}</th>
-                ))}
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Reason</th>
                 <th>Status</th>
                 <th style={{ textAlign: "right" }}>Actions</th>
               </tr>
@@ -123,7 +119,7 @@ export default function LeadsPage() {
             <tbody>
               {filteredLeads.length === 0 ? (
                 <tr>
-                  <td colSpan={fields.length + 3} style={{ textAlign: "center", padding: "3rem" }}>
+                  <td colSpan={6} style={{ textAlign: "center", padding: "3rem" }}>
                     No leads found.
                   </td>
                 </tr>
@@ -136,13 +132,21 @@ export default function LeadsPage() {
                         {new Date(lead.createdAt).toLocaleTimeString()}
                       </div>
                     </td>
-                    {fields.slice(0, 3).map(field => (
-                      <td key={field.id}>
-                        <div style={{ maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                          {lead[field.name] || "-"}
-                        </div>
-                      </td>
-                    ))}
+                    <td>
+                      <div style={{ maxWidth: "150px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {lead.firstName} {lead.lastName}
+                      </div>
+                    </td>
+                    <td>
+                      <div style={{ maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {lead.phone || "-"}
+                      </div>
+                    </td>
+                    <td>
+                      <div style={{ maxWidth: "150px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {lead.reason || "-"}
+                      </div>
+                    </td>
                     <td>
                       <span style={{ 
                         padding: "0.25rem 0.75rem", 
@@ -212,14 +216,30 @@ export default function LeadsPage() {
                 </div>
               </div>
               
-              {fields.map(field => (
-                <div key={field.id} style={{ borderTop: "1px solid var(--border)", paddingTop: "1rem" }}>
-                  <span style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>{field.label}</span>
-                  <div style={{ fontWeight: 500, whiteSpace: "pre-wrap" }}>
-                    {selectedLead[field.name] || "-"}
-                  </div>
-                </div>
-              ))}
+              <div style={{ borderTop: "1px solid var(--border)", paddingTop: "1rem" }}>
+                <span style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>First Name</span>
+                <div style={{ fontWeight: 500, whiteSpace: "pre-wrap" }}>{selectedLead.firstName || "-"}</div>
+              </div>
+              <div style={{ borderTop: "1px solid var(--border)", paddingTop: "1rem" }}>
+                <span style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>Last Name</span>
+                <div style={{ fontWeight: 500, whiteSpace: "pre-wrap" }}>{selectedLead.lastName || "-"}</div>
+              </div>
+              <div style={{ borderTop: "1px solid var(--border)", paddingTop: "1rem" }}>
+                <span style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>Phone</span>
+                <div style={{ fontWeight: 500, whiteSpace: "pre-wrap" }}>{selectedLead.phone || "-"}</div>
+              </div>
+              <div style={{ borderTop: "1px solid var(--border)", paddingTop: "1rem" }}>
+                <span style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>Email</span>
+                <div style={{ fontWeight: 500, whiteSpace: "pre-wrap" }}>{selectedLead.email || "-"}</div>
+              </div>
+              <div style={{ borderTop: "1px solid var(--border)", paddingTop: "1rem" }}>
+                <span style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>Reason for Visit</span>
+                <div style={{ fontWeight: 500, whiteSpace: "pre-wrap" }}>{selectedLead.reason || "-"}</div>
+              </div>
+              <div style={{ borderTop: "1px solid var(--border)", paddingTop: "1rem" }}>
+                <span style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>Where did you hear about us?</span>
+                <div style={{ fontWeight: 500, whiteSpace: "pre-wrap" }}>{selectedLead.source || "-"}</div>
+              </div>
             </div>
             
             <div style={{ marginTop: "2rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>

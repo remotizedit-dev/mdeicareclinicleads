@@ -1,5 +1,5 @@
 import { db } from "./firebase";
-import { collection, getDocs, addDoc, doc, setDoc, query, orderBy, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, addDoc, doc, setDoc, getDoc, query, orderBy, deleteDoc } from "firebase/firestore";
 
 export async function deleteLead(id: string) {
   const docRef = doc(db, "leads", id);
@@ -28,18 +28,15 @@ export const DEFAULT_FIELDS: FormField[] = [
 
 export async function getFormFields(): Promise<FormField[]> {
   try {
-    const q = query(collection(db, "form_fields"), orderBy("order", "asc"));
-    const snapshot = await getDocs(q);
+    const docRef = doc(db, "settings", "form");
+    const docSnap = await getDoc(docRef);
     
-    if (snapshot.empty) {
-      // Return defaults if not configured
+    if (docSnap.exists()) {
+      return docSnap.data().fields as FormField[];
+    } else {
+      // Document doesn't exist yet, return defaults
       return DEFAULT_FIELDS;
     }
-
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    } as FormField));
   } catch (error) {
     console.error("Error fetching form fields:", error);
     return DEFAULT_FIELDS; // fallback
@@ -47,20 +44,9 @@ export async function getFormFields(): Promise<FormField[]> {
 }
 
 export async function saveFormFields(fields: FormField[]) {
-  // First, get all existing fields to delete them so we don't have stale fields
-  const q = query(collection(db, "form_fields"));
-  const snapshot = await getDocs(q);
-  
-  // Delete all existing documents
-  for (const docSnapshot of snapshot.docs) {
-    await deleteDoc(doc(db, "form_fields", docSnapshot.id));
-  }
-  
-  // Now save all the new fields
-  for (const field of fields) {
-    const docRef = doc(db, "form_fields", field.id || field.name);
-    await setDoc(docRef, field);
-  }
+  // Save the entire array as a single atomic document
+  const docRef = doc(db, "settings", "form");
+  await setDoc(docRef, { fields });
 }
 
 export async function submitLead(data: Record<string, any>) {

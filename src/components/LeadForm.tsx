@@ -1,24 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { FormField, getFormFields, submitLead, DEFAULT_FIELDS } from "@/lib/formService";
+import { useState } from "react";
+import { submitLead } from "@/lib/formService";
 import { sendLeadEmail } from "@/app/actions/sendEmail";
 import { CheckCircle, Loader2 } from "lucide-react";
 
-export default function LeadForm({ initialFields = DEFAULT_FIELDS }: { initialFields?: FormField[] }) {
-  const [fields, setFields] = useState<FormField[]>(initialFields.length > 0 ? initialFields : DEFAULT_FIELDS);
-  const [formData, setFormData] = useState<Record<string, string>>({});
+export default function LeadForm() {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+    reason: "",
+    source: ""
+  });
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (initialFields && initialFields.length > 0) {
-      setFields(initialFields);
-    }
-  }, [initialFields]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -31,14 +31,21 @@ export default function LeadForm({ initialFields = DEFAULT_FIELDS }: { initialFi
     setError("");
     
     try {
-      // 1. Save to Firebase
+      // 1. Save to Firebase leads collection
       await submitLead(formData);
       
       // 2. Send Email Notification
       await sendLeadEmail(formData);
 
       setSuccess(true);
-      setFormData({});
+      setFormData({
+        firstName: "",
+        lastName: "",
+        phone: "",
+        email: "",
+        reason: "",
+        source: ""
+      });
     } catch (err) {
       setError("Failed to submit. Please try again later.");
       console.error(err);
@@ -76,49 +83,100 @@ export default function LeadForm({ initialFields = DEFAULT_FIELDS }: { initialFi
         </div>
       )}
 
-      {fields.map((field) => (
-        <div key={field.id || field.name} className="form-group">
-          <label className="form-label" htmlFor={field.name}>
-            {field.label} {field.required && <span style={{ color: "var(--danger)" }}>*</span>}
-          </label>
-          
-          {field.type === "textarea" ? (
-            <textarea
-              id={field.name}
-              name={field.name}
-              required={field.required}
-              className="form-input"
-              rows={4}
-              value={formData[field.name] || ""}
-              onChange={handleChange}
-            />
-          ) : field.type === "select" ? (
-            <select
-              id={field.name}
-              name={field.name}
-              required={field.required}
-              className="form-input"
-              value={formData[field.name] || ""}
-              onChange={handleChange}
-            >
-              <option value="">Select an option</option>
-              {field.options?.map((opt) => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-          ) : (
-            <input
-              type={field.type}
-              id={field.name}
-              name={field.name}
-              required={field.required}
-              className="form-input"
-              value={formData[field.name] || ""}
-              onChange={handleChange}
-            />
-          )}
-        </div>
-      ))}
+      <div className="form-group">
+        <label className="form-label" htmlFor="firstName">
+          First Name <span style={{ color: "var(--danger)" }}>*</span>
+        </label>
+        <input
+          type="text"
+          id="firstName"
+          name="firstName"
+          required
+          className="form-input"
+          value={formData.firstName}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className="form-group">
+        <label className="form-label" htmlFor="lastName">
+          Last Name
+        </label>
+        <input
+          type="text"
+          id="lastName"
+          name="lastName"
+          className="form-input"
+          value={formData.lastName}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className="form-group">
+        <label className="form-label" htmlFor="phone">
+          Phone Number <span style={{ color: "var(--danger)" }}>*</span>
+        </label>
+        <input
+          type="tel"
+          id="phone"
+          name="phone"
+          required
+          className="form-input"
+          value={formData.phone}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className="form-group">
+        <label className="form-label" htmlFor="email">
+          Email Address
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          className="form-input"
+          value={formData.email}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className="form-group">
+        <label className="form-label" htmlFor="reason">
+          Reason for Visit
+        </label>
+        <select
+          id="reason"
+          name="reason"
+          className="form-input"
+          value={formData.reason}
+          onChange={handleChange}
+        >
+          <option value="">Select an option</option>
+          <option value="Regular Checkup">Regular Checkup</option>
+          <option value="Prescription Refill">Prescription Refill</option>
+          <option value="Personal">Personal</option>
+          <option value="Professional (WCB, Driver Medical etc.)">Professional (WCB, Driver Medical etc.)</option>
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label className="form-label" htmlFor="source">
+          Where did you hear about us?
+        </label>
+        <select
+          id="source"
+          name="source"
+          className="form-input"
+          value={formData.source}
+          onChange={handleChange}
+        >
+          <option value="">Select an option</option>
+          <option value="Personal Referral">Personal Referral</option>
+          <option value="Google">Google</option>
+          <option value="Social Media">Social Media</option>
+        </select>
+      </div>
       
       <button 
         type="submit" 
