@@ -73,9 +73,12 @@ export default function LeadForm() {
 
   return (
     <form onSubmit={handleSubmit} className="glass-card" style={{ padding: "2rem", borderRadius: "1rem" }}>
-      <h3 style={{ marginBottom: "1.5rem", fontSize: "1.5rem", color: "var(--text-primary)" }}>
-        Request a Consultation
+      <h3 style={{ marginBottom: "0.5rem", fontSize: "1.75rem", color: "var(--primary)" }}>
+        Book your Appointment now
       </h3>
+      <p style={{ marginBottom: "1.5rem", color: "var(--text-secondary)", fontSize: "0.95rem" }}>
+        Skip the waiting room. Fill out the form below and our medical team will reach out to confirm your spot!
+      </p>
       
       {error && (
         <div style={{ backgroundColor: "var(--danger)", color: "white", padding: "0.75rem", borderRadius: "var(--radius-md)", marginBottom: "1.5rem" }}>

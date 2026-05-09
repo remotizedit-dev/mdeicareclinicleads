@@ -477,3 +477,19 @@ a:hover {
     justify-content: center;
   }
 }
+
+/* Responsive Hero Grid */
+.hero-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 4rem;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .hero-grid {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 2rem;
+  }
+}

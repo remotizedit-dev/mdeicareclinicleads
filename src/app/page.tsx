@@ -53,12 +53,7 @@ export default function Home() {
       }} />
 
       <div className="container" style={{ padding: "4rem 1.5rem" }}>
-        <div style={{ 
-          display: "grid", 
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", 
-          gap: "4rem",
-          alignItems: "center" 
-        }}>
+        <div className="hero-grid">
           
           <div className="animate-fade-in">
             <div style={{ 
