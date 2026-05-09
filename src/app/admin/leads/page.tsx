@@ -6,7 +6,6 @@ import { Loader2, Download, Search, Eye, Trash2, X } from "lucide-react";
 
 export default function LeadsPage() {
   const [leads, setLeads] = useState<any[]>([]);
-  const [fields, setFields] = useState<FormField[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLead, setSelectedLead] = useState<any>(null);
