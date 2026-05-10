@@ -1,9 +1,9 @@
 import { MetadataRoute } from 'next'
- 
+
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://medicareclinic.ca',
+      url: 'https://medicarecalgary.com',
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 1.0,
