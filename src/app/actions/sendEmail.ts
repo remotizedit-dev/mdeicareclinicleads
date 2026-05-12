@@ -29,16 +29,16 @@ export async function sendLeadEmail(formData: Record<string, any>) {
     const mailOptions = {
       from: process.env.GMAIL_USER,
       to: process.env.RECEIVER_EMAIL?.split(",") || process.env.GMAIL_USER, // Sends to specific email or defaults to sender
-      subject: "New Lead Form Submission - Medicare Clinic",
-      text: `You have received a new lead submission:\n\n${formText}`,
+      subject: "New Online Appointment Request - Medicare Clinic",
+      text: `You have received a new online appointment request:\n\n${formText}`,
       html: `
         <div style="font-family: Arial, sans-serif; color: #333;">
-          <h2 style="color: #039855;">New Lead Submission</h2>
-          <p>You have received a new consultation request from the website.</p>
+          <h2 style="color: #039855;">New Online Appointment Request</h2>
+          <p>You have received a new appointment request from the website.</p>
           <ul style="list-style-type: none; padding: 0;">
             ${formHtml}
           </ul>
-          <p style="margin-top: 20px; font-size: 12px; color: #777;">This is an automated notification from your leads management. </br>Developed by RemotizedIT</p>
+          <p style="margin-top: 20px; font-size: 12px; color: #777;">This is an automated notification from your online appointment management. </br>Developed by Dexcel</p>
         </div>
       `,
     };
